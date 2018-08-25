@@ -1,30 +1,21 @@
 import React from 'react';
 import styled from 'styled-components';
-import { number, string, shape, arrayOf, func, bool } from 'prop-types';
+import { string, shape, arrayOf, func, bool } from 'prop-types';
 
-const languageColors = {
-  JavaScript: '#f1e05a',
-  TypeScript: '#2b7489',
-  HTML: '#e34c26',
-  CSS: '#563d7c',
-  shell: '#89e051',
-  other: '#949494',
-};
 const RepoList = props => {
-  // @TODO
-  // throw new Error('Implement the repo list according to the layout');
-  const { className, data } = props
+  const { className, data, isLastPage, fetchMore } = props
   return (
     <div className={className}>
       <h3>{props.username} – repos</h3>
 
       {data.map(item => <div key={item.id}>
-        <a className='names' href={item.html_url}>{item.name}</a>
+        <a className='names' href={item.url}>{item.name}</a>
         <p>{item.description}</p>
-        <p><LanguageColor language={item.language} />{item.language}</p>
+        <p><LanguageColor color={item.primaryLanguage ? item.primaryLanguage.color : '#000000'} />
+          {item.primaryLanguage ? item.primaryLanguage.name : 'Language not defined'}</p>
       </div>)}
 
-      {!props.isLastPage && <StyledButton onClick={props.fetchMore}>Load more</StyledButton>}
+      {!isLastPage && <StyledButton onClick={fetchMore}>Load more</StyledButton>}
     </div>
   )
 };
@@ -36,7 +27,7 @@ const LanguageColor = styled.span`
   height: 10px;
   border-radius: 5px;
   margin-right: 10px;
-  background-color: ${props => languageColors[props.language] ? props => languageColors[props.language] : languageColors['other']}
+  background-color: ${props => props.color}
   `;
 
 const StyledRepoList = styled(RepoList)`
@@ -78,7 +69,7 @@ RepoList.propTypes = {
   username: string.isRequired,
   data: arrayOf(
     shape({
-      id: number,
+      id: string,
       name: string,
       html_url: string,
       language: string,

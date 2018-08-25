@@ -28,8 +28,8 @@ it('sends 404 for non-existent paths', async () => {
   expect(res.status).toEqual(404);
 });
 
-console.log('Unskip this test if you did the graphql implementation');
-it.skip('can query via graphql', async () => {
+// console.log('Unskip this test if you did the graphql implementation');
+it('can query via graphql', async () => {
   const res = await (await fetch('http://localhost:4848/graphql', {
     method: 'POST',
     headers: {

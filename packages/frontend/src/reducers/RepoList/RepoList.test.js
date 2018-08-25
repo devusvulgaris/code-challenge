@@ -2,7 +2,15 @@ import reducer from './';
 import { FETCH_SUCCESS } from '../../actions';
 
 it('should return the initialState', () => {
-  throw new Error('Not implemented');
+ const initialState = {
+  loading: true,
+  error: null,
+  data: [],
+  nextPage: null,
+  isLastPage: false,
+};
+
+ expect(reducer(initialState, {})).toEqual(initialState);
 });
 
 it('should append to the data array with FETCH_SUCCESS', () => {
@@ -24,5 +32,15 @@ it('should append to the data array with FETCH_SUCCESS', () => {
 });
 
 it('should set isLastPage to true if nextPage is null', () => {
-  throw new Error('Not implemented');
+  const action = {type: FETCH_SUCCESS, nextPage: null };
+
+  const initialState = {
+    loading: true,
+    error: null,
+    data: [],
+    nextPage: null,
+    isLastPage: false,
+  };
+
+  expect(reducer(initialState, action).isLastPage).toEqual(true);
 });

@@ -16,7 +16,7 @@ const fetchError = error => ({
 const fetchSuccess = ({ nextPage, data }) => ({
   type: FETCH_SUCCESS,
   nextPage,
-  data,
+  data
 });
 
 /**
@@ -35,8 +35,30 @@ export const fetchUserRepos = username => async (dispatch, getState) => {
 
   const { REACT_APP_GITHUB_API_KEY: token } = process.env;
 
+  
+  let pagination = null;  // Storage for link header, to be processed by parseLinkHeaders.
+  let nextPage = getState().RepoList.nextPage  
+  const page = nextPage ? `&page=${nextPage}` : ''  // Page for querying data from github endpoint.
+
   try {
-    throw new Error('Not implemented (actions/RepoList/index.js)');
+    const res = await fetch(`https://api.github.com/users/${username}/repos?per_page=4${page}`, {
+      headers: {
+        'Authorization': 'token ' + token,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    pagination = parseLinkHeaders(res.headers.get('link'))
+  
+    if (!res.ok) throw new Error('Fetching error occured');
+    const response = await res.json();
+
+    const payload = {
+      nextPage: pagination && pagination.next ? pagination.next.page : null,
+      data: response,
+    }
+
+    dispatch(fetchSuccess(payload))
   } catch (error) {
     dispatch(fetchError(error.message));
   }
